@@ -1,0 +1,504 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/Nuggets-20x20.png?v=2.8.0" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/Nuggets-40x40.png?v=2.8.0" type="image/png" sizes="32x32"><meta name="description" content="TuGraph 是蚂蚁集团自主研发的大规模图计算系统，提供图数据库引擎和图分析引擎。其主要特点是大数据量存储和计算，高吞吐率，以及灵活的 API，同时支持高效的在线事务处理（OLTP）和在线分析处理（OLAP）。 LightGraph、GeaGraph 是 TuGraph 的曾用名。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TuGraph安装与简单使用">
+<meta property="og:url" content="http://example.com/2022/09/15/how_to_install_tugraph/index.html">
+<meta property="og:site_name" content="Louis&#39;s Blog">
+<meta property="og:description" content="TuGraph 是蚂蚁集团自主研发的大规模图计算系统，提供图数据库引擎和图分析引擎。其主要特点是大数据量存储和计算，高吞吐率，以及灵活的 API，同时支持高效的在线事务处理（OLTP）和在线分析处理（OLAP）。 LightGraph、GeaGraph 是 TuGraph 的曾用名。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-15T04:35:51.000Z">
+<meta property="article:modified_time" content="2022-09-15T04:35:51.000Z">
+<meta property="article:author" content="Yushi Liu">
+<meta property="article:tag" content="TuGraph">
+<meta name="twitter:card" content="summary"><title>TuGraph安装与简单使用 | Louis's Blog</title><link ref="canonical" href="http://example.com/2022/09/15/how_to_install_tugraph/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.8.0"><link rel="stylesheet" href="css/custom.css"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":true},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="javascript:;" onclick="return false;"><span class="header-nav-menu-item__icon"><i class="fas fa-feather"></i></span><span class="header-nav-menu-item__text">文章</span></a><div class="header-nav-submenu"><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/archives/"><span class="header-nav-submenu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-submenu-item__text">归档</span></a></div><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/categories/"><span class="header-nav-submenu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-submenu-item__text">分类</span></a></div><div class="header-nav-submenu-item"><a class="header-nav-submenu-item__link" href="/tags/"><span class="header-nav-submenu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-submenu-item__text">标签</span></a></div></div></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/pictures"><span class="header-nav-menu-item__icon"><i class="fas fa-image"></i></span><span class="header-nav-menu-item__text">相册</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/about"><span class="header-nav-menu-item__icon"><i class="fas fa-address-card"></i></span><span class="header-nav-menu-item__text">关于</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">Welcome to My Blog</div></div><div class="header-banner-arrow"><div class="header-banner-arrow__icon"><i class="fas fa-angle-down"></i></div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">TuGraph安装与简单使用</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2022-09-15</span></span><span class="post-meta-item post-meta-item--updatetime"><span class="post-meta-item__icon"><i class="far fa-calendar-check"></i></span><span class="post-meta-item__info">更新于</span><span class="post-meta-item__value">2022-09-15</span></span><span class="post-meta-item post-meta-item--readtime"><span class="post-meta-item__icon"><i class="far fa-clock"></i></span><span class="post-meta-item__info">阅读时长</span><span class="post-meta-item__value">41分</span></span></div></header><div class="post-body"><p>TuGraph 是蚂蚁集团自主研发的大规模图计算系统，提供图数据库引擎和图分析引擎。其主要特点是大数据量存储和计算，高吞吐率，以及灵活的 API，同时支持高效的在线事务处理（OLTP）和在线分析处理（OLAP）。 LightGraph、GeaGraph 是 TuGraph 的曾用名。</p>
+<span id="more"></span>
+
+
+        <h2 id="一、安装"   >
+          <a href="#一、安装" class="heading-link"><i class="fas fa-link"></i></a><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2>
+      
+        <h3 id="1-安装docker"   >
+          <a href="#1-安装docker" class="heading-link"><i class="fas fa-link"></i></a><a href="#1-安装docker" class="headerlink" title="1. 安装docker"></a>1. 安装docker</h3>
+      <p><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://blog.csdn.net/cacique111/article/details/126842228" >安装docker</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+
+        <h3 id="2-拉取TuGraph镜像"   >
+          <a href="#2-拉取TuGraph镜像" class="heading-link"><i class="fas fa-link"></i></a><a href="#2-拉取TuGraph镜像" class="headerlink" title="2. 拉取TuGraph镜像"></a>2. 拉取TuGraph镜像</h3>
+      <p><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://hub.docker.com/search?q=tugraph" >https://hub.docker.com/search?q=tugraph</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/425e168779754829ba236dd61668d203.png#pic_center) -->
+
+
+
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull tugraph/tugraph-db-centos7</span><br></pre></td></tr></table></div></figure>
+
+
+        <h3 id="3-启动docker"   >
+          <a href="#3-启动docker" class="heading-link"><i class="fas fa-link"></i></a><a href="#3-启动docker" class="headerlink" title="3. 启动docker"></a>3. 启动docker</h3>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 7070:7070 -p 9090:9090 --name tugraph_demo tugraph/tugraph-db-centos7 lgraph_server</span><br><span class="line"># 7070是默认的http端口，web访问使用。</span><br><span class="line"># 9090是默认的rpc端口，rpc client访问使用。</span><br></pre></td></tr></table></div></figure>
+
+
+        <h3 id="4-访问web端"   >
+          <a href="#4-访问web端" class="heading-link"><i class="fas fa-link"></i></a><a href="#4-访问web端" class="headerlink" title="4. 访问web端"></a>4. 访问web端</h3>
+      <p>在浏览器内输入，默认用户名为<code>admin</code>，密码为73@<code>TuGraph</code></p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost:7070</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/ed4687b3eafd41199a53bd8a79c132b2.png#pic_center) -->
+
+
+<p>登录控制台之后可以点击左侧<code>帮助</code>查看相关文档</p>
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/e96a86a7d79349beb1adbb907b13e214.png#pic_center) -->
+
+
+
+        <h2 id="二、数据类型"   >
+          <a href="#二、数据类型" class="heading-link"><i class="fas fa-link"></i></a><a href="#二、数据类型" class="headerlink" title="二、数据类型"></a>二、数据类型</h2>
+      <p>TuGraph 支持多种可用作属性的数据类型，具体支持的数据类型如下所示：</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th><strong>数据类型</strong></th>
+<th><strong>最小值</strong></th>
+<th><strong>最大值</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BOOL</td>
+<td>false</td>
+<td>true</td>
+<td>布尔值</td>
+</tr>
+<tr>
+<td>INT8</td>
+<td>-128</td>
+<td>127</td>
+<td>8-bit 整型</td>
+</tr>
+<tr>
+<td>INT16</td>
+<td>-32768</td>
+<td>32767</td>
+<td>16-bit 整型</td>
+</tr>
+<tr>
+<td>INT32</td>
+<td>- 2^31</td>
+<td>2^31 - 1</td>
+<td>32-bit 整型</td>
+</tr>
+<tr>
+<td>INT64</td>
+<td>- 2^63</td>
+<td>2^63 - 1</td>
+<td>64-bit 整型</td>
+</tr>
+<tr>
+<td>DATE</td>
+<td>0000-00-00</td>
+<td>9999-12-31</td>
+<td>“YYYY-MM-DD” 格式的日期</td>
+</tr>
+<tr>
+<td>DATETIME</td>
+<td>0000-00-00 00:00:00</td>
+<td>9999-12-31 23:59:59</td>
+<td>“YYYY-MM-DD hh:mm:ss”格式的时间日期</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td></td>
+<td></td>
+<td>32-bit 浮点数</td>
+</tr>
+<tr>
+<td>DOUBLE</td>
+<td></td>
+<td></td>
+<td>64-bit 浮点数</td>
+</tr>
+<tr>
+<td>STRING</td>
+<td></td>
+<td></td>
+<td>长度不定的字符串</td>
+</tr>
+<tr>
+<td>BLOB</td>
+<td></td>
+<td></td>
+<td>二进制数据</td>
+</tr>
+</tbody></table></div>
+
+        <h2 id="三、图基础"   >
+          <a href="#三、图基础" class="heading-link"><i class="fas fa-link"></i></a><a href="#三、图基础" class="headerlink" title="三、图基础"></a>三、图基础</h2>
+      <p>TuGraph采用属性图模型。图模型是对事物及其关联关系的建模，由</p>
+<ul>
+<li>顶点（vertices&#x2F;nodes）</li>
+<li>边（edges&#x2F;relationships）</li>
+<li>属性（property）</li>
+</ul>
+<p>​	组成，接下来看一下文档里的示例<code>yago</code>：</p>
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/9e71f0d86e4c44a0a3ff4538d9985c4e.png#pic_center) -->
+
+
+
+
+<p><code>yago</code>数据共包含5种顶点，8种边，共同描述电影和演员的基本关系，以及用户对电影的评分。</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th>标签</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>movie</td>
+<td>实体</td>
+<td>表示某一部具体的影片，比如”阿甘正传”。</td>
+</tr>
+<tr>
+<td>person</td>
+<td>实体</td>
+<td>表示个人，对影片来说可能是演员、导演，或编剧。</td>
+</tr>
+<tr>
+<td>genre</td>
+<td>实体</td>
+<td>表示影片的类型，比如剧情片、恐怖片。</td>
+</tr>
+<tr>
+<td>keyword</td>
+<td>实体</td>
+<td>表示与影片相关的一些关键字，比如”拯救世界”、”虚拟现实”、”地铁”。</td>
+</tr>
+<tr>
+<td>user</td>
+<td>实体</td>
+<td>表示观影的用户。</td>
+</tr>
+<tr>
+<td>produce</td>
+<td>关系</td>
+<td>表示影片的出品人关系。</td>
+</tr>
+<tr>
+<td>acted_in</td>
+<td>关系</td>
+<td>表示演员出演了哪些影片。</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>关系</td>
+<td>表示影片的导演是谁。</td>
+</tr>
+<tr>
+<td>write</td>
+<td>关系</td>
+<td>表示影片的编剧关系。</td>
+</tr>
+<tr>
+<td>has_genre</td>
+<td>关系</td>
+<td>表示影片的类型分类。</td>
+</tr>
+<tr>
+<td>has_keyword</td>
+<td>关系</td>
+<td>表示影片的一些关键字，即更细分类的标签。</td>
+</tr>
+<tr>
+<td>rate</td>
+<td>关系</td>
+<td>表示用户对影片的打分。</td>
+</tr>
+</tbody></table></div>
+
+        <h2 id="四、建模"   >
+          <a href="#四、建模" class="heading-link"><i class="fas fa-link"></i></a><a href="#四、建模" class="headerlink" title="四、建模"></a>四、建模</h2>
+      <p>在建模页面中，左侧蓝色部分表示点的模型，右侧绿色部分表示边的模型。一级子节点是模型的名称，二级子节点是模型的属性，三级子节点是这个属性的信息：是否可空，和他的数据类型。<br>右上角可以搜索模型的名称或者属性，页面中会用红色高亮显示。<br>创建顶点模型，点击添加，选择对应的数据类型，是否可空默认是否，设置主键，创建成功之后页面中就会显示出来。<br>创建边的模型，不需要设置主键，也可以不添加任何属性。</p>
+
+        <h3 id="4-1-新建子图"   >
+          <a href="#4-1-新建子图" class="heading-link"><i class="fas fa-link"></i></a><a href="#4-1-新建子图" class="headerlink" title="4.1 新建子图"></a>4.1 新建子图</h3>
+      <!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/52a7c0c58e044ad6b3027e7970689481.png#pic_center) -->
+
+
+
+        <h3 id="4-2-顶点标签"   >
+          <a href="#4-2-顶点标签" class="heading-link"><i class="fas fa-link"></i></a><a href="#4-2-顶点标签" class="headerlink" title="4.2 顶点标签"></a>4.2 顶点标签</h3>
+      <p>person</p>
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/126cb51b1d684ce7b3676d48748ab5bd.png#pic_center) -->
+
+
+<p>movie</p>
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/97622f53b5524cbdb4d31d32104d69d8.png#pic_center) -->
+
+
+
+        <h3 id="4-3-关系标签"   >
+          <a href="#4-3-关系标签" class="heading-link"><i class="fas fa-link"></i></a><a href="#4-3-关系标签" class="headerlink" title="4.3 关系标签"></a>4.3 关系标签</h3>
+      <p>produce</p>
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/8e4f9ec77a9c480abe48e8a9373880e8.png#pic_center) -->
+
+
+
+        <h2 id="五、数据导入"   >
+          <a href="#五、数据导入" class="heading-link"><i class="fas fa-link"></i></a><a href="#五、数据导入" class="headerlink" title="五、数据导入"></a>五、数据导入</h2>
+      <p>在导入页面，我们可以上传csv文件在线导入数据，点击选择文件从电脑中选择csv 文件，之后我们先要进行映射数据的操作，首先选择对应的模型（选择movie），点击映射数据，上面的表格是数据模型的属性、数据类型、是否选填。</p>
+<p>TuGraph支持从 CSV 文件和 JSON 数据源导入数据。</p>
+
+        <h4 id="movie-csv"   >
+          <a href="#movie-csv" class="heading-link"><i class="fas fa-link"></i></a><a href="#movie-csv" class="headerlink" title="movie.csv"></a>movie.csv</h4>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">LABEL=movie</span><br><span class="line">id:INT32:ID,title:STRING,tagline:STRING,summary:STRING:OPTIONAL,poster_image:STRING:OPTIONAL,duration:INT32,rated:STRING:OPTIONAL</span><br><span class="line">1,The Matrix,Welcome to the Real World.,Thomas A. Anderson is a man living two lives. By day he is an average computer programmer and by night a malevolent hacker known as Neo who finds himself targeted by the police when he is contacted by Morpheus a legendary computer hacker who reveals the shocking truth about our reality.,http://image.tmdb.org/t/p/w185/gynBNzwyaHKtXqlEKKLioNkjKgN.jpg,136,R</span><br><span class="line">28,The Matrix Reloaded,Free your mind.,Six months after the events depicted in The Matrix Neo has proved to be a good omen for the free humans as more and more humans are being freed from the matrix and brought to Zion the one and only stronghold of the Resistance. Neo himself has discovered his superpowers including super speed ability to see the codes of the things inside the matrix and a certain degree of pre-cognition. But a nasty piece of news hits the human resistance: 250000 machine sentinels are digging to Zion and would reach them in 72 hours. As Zion prepares for the ultimate war Neo Morpheus and Trinity are advised by the Oracle to find the Keymaker who would help them reach the Source. Meanwhile Neo&#x27;s recurrent dreams depicting Trinity&#x27;s death have got him worried and as if it was not enough Agent Smith has somehow escaped deletion has become more powerful than before and has fixed Neo as his next target.,http://image.tmdb.org/t/p/w185/ezIurBz2fdUc68d98Fp9dRf5ihv.jpg,138,R</span><br><span class="line">68,The Matrix Revolutions,Everything that has a beginning has an end.,The human city of Zion defends itself against the massive invasion of the machines as Neo fights to end the war at another front while also opposing the rogue Agent Smith.,http://image.tmdb.org/t/p/w185/sKogjhfs5q3azmpW7DFKKAeLEG8.jpg,129,R</span><br><span class="line">82,Pulp Fiction,Just because you are a character doesn&#x27;t mean you have character.,placeholder text,http://image.tmdb.org/t/p/w185/dM2w364MScsjFf8pfMbaWUcWrR.jpg,154,R</span><br><span class="line">130,Cloud Atlas,Everything is Connected,placeholder text,http://image.tmdb.org/t/p/w185/k9gWDjfXM80iXQLuMvPlZgSFJgR.jpg,172,R</span><br><span class="line">457,The Shawshank Redemption,Fear can hold you prisoner. Hope can set you free.,placeholder text,http://image.tmdb.org/t/p/w185/9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg,142,R</span><br><span class="line">471,The Godfather,An offer you can&#x27;t refuse.,placeholder text,http://image.tmdb.org/t/p/w185/d4KNaTrltq6bpkFS01pYtyXa09m.jpg,175,R</span><br><span class="line">496,The Godfather: Part II,I don&#x27;t feel I have to wipe everybody out\ Tom. Just my enemies.,placeholder text,http://image.tmdb.org/t/p/w185/tHbMIIF51rguMNSastqoQwR0sBs.jpg,200,R</span><br><span class="line">517,The Good\ the Bad and the Ugly,For three men the Civil War wasn&#x27;t hell. It was practice.,placeholder text,http://image.tmdb.org/t/p/w185/8PD1dgf0kQHtRawoSxp1jFemI1q.jpg,161,R</span><br><span class="line">532,The Dark Knight,Why So Serious?,placeholder text,http://image.tmdb.org/t/p/w185/1hRoyzDtpgMU7Dz4JF22RANzQO7.jpg,152,PG-13</span><br><span class="line">564,The Dark Knight Rises,The Legend Ends,placeholder text,http://image.tmdb.org/t/p/w185/dEYnvnUfXrqvqeRSqvIEtmzhoA8.jpg,165,PG-13</span><br><span class="line">598,Schindler&#x27;s List,Whoever saves one life\ saves the world entire.,placeholder text,http://image.tmdb.org/t/p/w185/tvOvW7Qjj63zbQW5TZ8CjPThAUd.jpg,195,R</span><br><span class="line">615,12 Angry Men,Life is in their hands. Death is on their minds.,placeholder text,http://image.tmdb.org/t/p/w185/wvlFtIwh0GIqHRAz9F5cCch2IJD.jpg,96,NR</span><br><span class="line">641,The Lord of the Rings: The Return of the King,The eye of the enemy is moving.,Aragorn is revealed as the heir to the ancient kings as he Gandalf and the other members of the broken fellowship struggle to save Gondor from Sauron&#x27;s forces. Meanwhile Frodo and Sam bring the ring closer to the heart of Mordor the dark lord&#x27;s realm.,http://image.tmdb.org/t/p/w185/50LoR9gJhbWZ5PpoHgi8MNTYgzd.jpg,201,PG-13</span><br><span class="line">681,Fight Club,How much can you know about yourself if you&#x27;ve never been in a fight?,placeholder text,http://image.tmdb.org/t/p/w185/2lECpi35Hnbpa4y46JX0aY3AWTy.jpg,139,R</span><br><span class="line">698,The Lord of the Rings: The Fellowship of the Ring,One ring to rule them all,Young hobbit Frodo Baggins after inheriting a mysterious ring from his uncle Bilbo must leave his home in order to keep it from falling into the hands of its evil creator. Along the way a fellowship is formed to protect the ringbearer and make sure that the ring arrives at its final destination: Mt. Doom the only place where it can be destroyed.,http://image.tmdb.org/t/p/w185/9HG6pINW1KoFTAKY3LdybkoOKAm.jpg,178,PG-13</span><br><span class="line">710,Star Wars: Episode V - The Empire Strikes Back,The Adventure Continues...,placeholder text,http://image.tmdb.org/t/p/w185/6u1fYtxG5eqjhtCPDx04pJphQRW.jpg,124,PG</span><br><span class="line">737,Inception,Your mind is the scene of the crime.,placeholder text,http://image.tmdb.org/t/p/w185/tAXARVreJnWfoANIHASmgYk4SB0.jpg,148,PG-13</span><br><span class="line">750,One Flew Over the Cuckoo&#x27;s Nest,If he&#x27;s crazy\ what does that make you?,placeholder text,http://image.tmdb.org/t/p/w185/srr59GKJdDXPwnWlew9NoYfOvYV.jpg,133,R</span><br><span class="line">770,Forrest Gump,The world will never be the same\ once you&#x27;ve seen it through the eyes of Forrest Gump.,A man with a low IQ has accomplished great things in his life and been present during significant historic events - in each case far exceeding what anyone imagined he could do. Yet despite all the things he has attained his one true love eludes him. &#x27;Forrest Gump&#x27; is the story of a man who rose above his challenges and who proved that determination courage and love are more important than ability.,http://image.tmdb.org/t/p/w185/z4ROnCrL77ZMzT0MsNXY5j25wS2.jpg,142,PG-13</span><br><span class="line">781,Goodfellas,Three Decades of Life in the Mafia.,placeholder text,http://image.tmdb.org/t/p/w185/pwpGfTImTGifEGgLb3s6LRPd4I6.jpg,146,R</span><br><span class="line">797,The Lord of the Rings: The Two Towers,A New Power Is Rising.,Frodo and Sam are trekking to Mordor to destroy the One Ring of Power while Gimli Legolas and Aragorn search for the orc-captured Merry and Pippin. All along nefarious wizard Saruman awaits the Fellowship members at the Orthanc Tower in Isengard.,http://image.tmdb.org/t/p/w185/9mBjBuUmBBgnGjV1JZ2uCIYbaph.jpg,179,PG-13</span><br><span class="line">805,Star Wars: Episode IV - A New Hope,A long time ago in a galaxy far\ far away...,Princess Leia is captured and held hostage by the evil Imperial forces in their effort to take over the galactic Empire. Venturesome Luke Skywalker and dashing captain Han Solo team together with the loveable robot duo R2-D2 and C-3PO to rescue the beautiful princess and restore peace and justice in the Empire.,http://image.tmdb.org/t/p/w185/tvSlBzAdRE29bZe5yYWrJ2ds137.jpg,121,PG</span><br><span class="line">1096,3 Days to Kill,amazing killing time,placeholder text,http://image.tmdb.org/t/p/w185/53pam1GAosXwOjefCEVNjYTvy6j.jpg,113,PG-13</span><br><span class="line">1097,300: Rise of an Empire,Amazing killing time,placeholder text,http://image.tmdb.org/t/p/w185/hrOMW22FV86te7uLyRnp3Z6Nv6e.jpg,0,R</span><br><span class="line">1118,American Hustle,Everyone Hustles To Survive,placeholder text,http://image.tmdb.org/t/p/w185/mhB7C62lSMpGO2HYNaW6d7W3TVH.jpg,138,R</span><br><span class="line">1241,Frozen,Amazing killing time,placeholder text,http://image.tmdb.org/t/p/w185/qb4ls8KzTJMFPEwNOfM7FotfC4Y.jpg,102,PG</span><br><span class="line">1293,Gravity,Don&#x27;t Let Go,placeholder text,http://image.tmdb.org/t/p/w185/2gPjLWIyrWlAn2DgKMOKTBnZYyO.jpg,91,PG-13</span><br><span class="line">1356,The Monuments Men,It was the greatest art heist in history,placeholder text,http://image.tmdb.org/t/p/w185/lhCUqVEPA3MMxnV8QTeVBTmRrP4.jpg,118,PG-13</span><br><span class="line">1366,The LEGO Movie,Assembling in 2014,placeholder text,http://image.tmdb.org/t/p/w185/lMHbadNmznKs5vgBAkHxKGHulOa.jpg,100,PG</span><br><span class="line">1412,RoboCop,We&#x27;ve got the future under control.,placeholder text,http://image.tmdb.org/t/p/w185/hFQcC5eSSHqJfk70RdgrMMxGuYt.jpg,102,PG-13</span><br><span class="line">1550,Her,Amazing killing time,placeholder text,http://image.tmdb.org/t/p/w185/8f8Hisd36IN8jN1OpKxsxRu8i57.jpg,126,R</span><br><span class="line">1596,Dallas Buyers Club,Dare to Live,placeholder text,http://image.tmdb.org/t/p/w185/ecb5z7VGKjfSQLPMwt1FOiPE5V0.jpg,117,R</span><br><span class="line">1693,12 Years a Slave,The extraordinary true story of Solomon Northup,placeholder text,http://image.tmdb.org/t/p/w185/kb3X943WMIJYVg4SOAyK0pmWL5D.jpg,134,R</span><br><span class="line">1768,Elysium,Amazing killing time,placeholder text,http://image.tmdb.org/t/p/w185/tHkjoAxmhp3Eau1h0Ir7maKMwUz.jpg,109,R</span><br><span class="line">1856,Epic,Discover a world beyond your imagination,placeholder text,http://image.tmdb.org/t/p/w185/fdXA81BOdZ3pEyBlY8UUvuJj136.jpg,102,PG</span><br><span class="line">1935,The Croods,Meet the first modern family.,placeholder text,http://image.tmdb.org/t/p/w185/mo4WQxBxs6IU7fmkIOyMOLyG3qq.jpg,98,PG</span><br><span class="line">2008,Mr. Peabody &amp; Sherman,Amazing killing time,placeholder text,http://image.tmdb.org/t/p/w185/qnmYfaopf7xJwLgVjeTdgZ4nI0v.jpg,92,PG</span><br><span class="line">2055,The Avengers,Some assembly required.,placeholder text,http://image.tmdb.org/t/p/w185/cezWGskPY5x7GaglTTRN4Fugfb8.jpg,143,PG-13</span><br><span class="line">2232,Hansel &amp; Gretel: Witch Hunters,Classic tale. New twist.,placeholder text,http://image.tmdb.org/t/p/w185/yDIVWFJqFLIeS8E1R6GG9uwPMS3.jpg,88,R</span><br><span class="line">2398,The Lorax,Meet The Original Force Of Nature,placeholder text,http://image.tmdb.org/t/p/w185/6FuYtjegxaUv7n7C733hUEOQytR.jpg,86,PG</span><br><span class="line">2422,Mulan,This time\ the princess saves the prince.,placeholder text,http://image.tmdb.org/t/p/w185/ztD0iLfeyESQZV95GwPeSE3Uyqn.jpg,88,G</span><br><span class="line">2498,Beowulf,Evil breeds pain.,placeholder text,http://image.tmdb.org/t/p/w185/j90lLkvlcPNL6VVoLGQ0yzPUfJV.jpg,115,PG-13</span><br><span class="line">2654,Solomon Kane,Fight evil... With evil.,placeholder text,http://image.tmdb.org/t/p/w185/n5SHBE4ulsDDVa9gYttUYwp1VZU.jpg,104,R</span><br><span class="line">2767,The Usual Suspects,Five Criminals . One Line Up . No Coincidence.,placeholder text,http://image.tmdb.org/t/p/w185/jgJoRWltoS17nD5MAQ1yK2Ztefw.jpg,106,R</span><br><span class="line">2885,Hugo,One of the most legendary directors of our time takes you on an extraordinary adventure.,placeholder text,http://image.tmdb.org/t/p/w185/fkeaJr29ypea1n24gzspsc7qK44.jpg,126,PG</span><br><span class="line">3106,Fargo,A lot can happen in the middle of nowhere.,placeholder text,http://image.tmdb.org/t/p/w185/aZeX4XNSqa08TdMHRB1gDLO6GOi.jpg,98,R</span><br><span class="line">3252,The Silence of the Lambs,To enter the mind of a killer she must challenge the mind of a madman.,placeholder text,http://image.tmdb.org/t/p/w185/qjAyTj2BSth1EQ89vNfo0JYVPFN.jpg,118,R</span><br><span class="line">3390,The King&#x27;s Speech,Find your voice.,placeholder text,http://image.tmdb.org/t/p/w185/v8M5Sytbut7vBXyZ1HDy8lUVVcB.jpg,118,R</span><br><span class="line">3459,There Will Be Blood,There Will Be Greed. There Will Be Vengeance.,placeholder text,http://image.tmdb.org/t/p/w185/bFgqkuAFBHNuq0oTtewHwuLVWSO.jpg,158,R</span><br><span class="line">3624,The Iron Lady,Never compromise,placeholder text,http://image.tmdb.org/t/p/w185/e67tal4u66eFz8yGnJGTO5FYRxY.jpg,105,PG-13</span><br><span class="line">3680,The Untouchables,What are you prepared to do?,placeholder text,http://image.tmdb.org/t/p/w185/nv7FOs90Y3Cq5tBhEITEV8Zebyw.jpg,119,R</span><br><span class="line">3753,Capote,In Cold Blood,placeholder text,http://image.tmdb.org/t/p/w185/bf3nxeLglBvXH5jAnMLmhc56muB.jpg,114,R</span><br><span class="line">3915,Lost in Translation,Everyone wants to be found.,placeholder text,http://image.tmdb.org/t/p/w185/5T8VvuFTdaawKLJk34i69Utaw7o.jpg,102,R</span><br></pre></td></tr></table></div></figure>
+
+
+        <h4 id="movie-json"   >
+          <a href="#movie-json" class="heading-link"><i class="fas fa-link"></i></a><a href="#movie-json" class="headerlink" title="movie.json"></a>movie.json</h4>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[3680,&quot;The Untouchables&quot;,&quot;What are you prepared to do?&quot;,&quot;placeholder text&quot;,&quot;http://image.tmdb.org/t/p/w185/nv7FOs90Y3Cq5tBhEITEV8Zebyw.jpg&quot;,119,&quot;R&quot;]</span><br><span class="line">[3753,&quot;Capote&quot;,&quot;In Cold Blood&quot;,&quot;placeholder text&quot;,&quot;http://image.tmdb.org/t/p/w185/bf3nxeLglBvXH5jAnMLmhc56muB.jpg&quot;,114,&quot;R&quot;]</span><br><span class="line">[3915,&quot;Lost in Translation&quot;,&quot;Everyone wants to be found.&quot;,&quot;placeholder text&quot;,&quot;http://image.tmdb.org/t/p/w185/5T8VvuFTdaawKLJk34i69Utaw7o.jpg&quot;,102,&quot;R&quot;]</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/d77771c4b8ab4103a10a482fc274dfe2.png#pic_center) -->
+
+
+<p>接下来我们映射person的数据，选择person的模型，点击映射数据，连线匹配，如果连线错误，可以选中这条线，点击删除线，重新连接，点击导入，导入成功。</p>
+
+        <h4 id="person-csv-数据比较多，放在另一篇文章里"   >
+          <a href="#person-csv-数据比较多，放在另一篇文章里" class="heading-link"><i class="fas fa-link"></i></a><a href="#person-csv-数据比较多，放在另一篇文章里" class="headerlink" title="person.csv(数据比较多，放在另一篇文章里)"></a><span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://blog.csdn.net/cacique111/article/details/126855753" >person.csv</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span>(数据比较多，放在另一篇文章里)</h4>
+      <!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/679a39a4b5024277a1bd63b6d33b2129.png#pic_center) -->
+
+
+<p>接下来我们映射边的数据，边的数据需要选择起点的挂载和终点的挂载，起点的挂载我们选择person的id，选择完之后表格会对应生成，终点的挂载选择movie的id，之后连接数据，点击确定，点击导入，导入数据成功。</p>
+
+        <h4 id="produce-csv"   >
+          <a href="#produce-csv" class="heading-link"><i class="fas fa-link"></i></a><a href="#produce-csv" class="headerlink" title="produce.csv"></a>produce.csv</h4>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">13,130</span><br><span class="line">14,130</span><br><span class="line">15,1</span><br><span class="line">15,28</span><br><span class="line">15,68</span><br><span class="line">106,82</span><br><span class="line">108,2498</span><br><span class="line">109,82</span><br><span class="line">145,130</span><br><span class="line">490,3915</span><br><span class="line">491,496</span><br><span class="line">491,3915</span><br><span class="line">549,737</span><br><span class="line">549,532</span><br><span class="line">549,564</span><br><span class="line">607,598</span><br><span class="line">609,598</span><br><span class="line">616,615</span><br><span class="line">664,641</span><br><span class="line">664,698</span><br><span class="line">664,797</span><br><span class="line">665,641</span><br><span class="line">665,698</span><br><span class="line">665,797</span><br><span class="line">665,3390</span><br><span class="line">666,641</span><br><span class="line">666,698</span><br><span class="line">666,797</span><br><span class="line">666,3390</span><br><span class="line">683,1693</span><br><span class="line">725,710</span><br><span class="line">725,805</span><br><span class="line">728,710</span><br><span class="line">728,805</span><br><span class="line">764,750</span><br><span class="line">776,2498</span><br><span class="line">791,2885</span><br><span class="line">793,781</span><br><span class="line">1119,1118</span><br><span class="line">1253,1241</span><br><span class="line">1295,1356</span><br><span class="line">1297,1293</span><br><span class="line">1298,1293</span><br><span class="line">1365,1356</span><br><span class="line">1371,2232</span><br><span class="line">1557,1550</span><br><span class="line">1705,1693</span><br><span class="line">1767,1768</span><br><span class="line">2021,2008</span><br><span class="line">2068,2055</span><br><span class="line">2074,2055</span><br><span class="line">2075,2055</span><br><span class="line">2243,2232</span><br><span class="line">2244,2232</span><br><span class="line">2779,2767</span><br><span class="line">2895,2885</span><br><span class="line">3113,3106</span><br><span class="line">3392,3390</span><br><span class="line">3464,3459</span><br><span class="line">3689,3680</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/83a28301d45e45e8b21ed250398decec.png#pic_center) -->
+
+
+
+        <h2 id="六、数据查询"   >
+          <a href="#六、数据查询" class="heading-link"><i class="fas fa-link"></i></a><a href="#六、数据查询" class="headerlink" title="六、数据查询"></a>六、数据查询</h2>
+      <p>TuGraph使用Cypher语言进行查询。</p>
+
+        <h3 id="6-1-什么是Cypher"   >
+          <a href="#6-1-什么是Cypher" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-1-什么是Cypher" class="headerlink" title="6.1 什么是Cypher"></a>6.1 什么是Cypher</h3>
+      <p>Cypher是一种声明式图查询语言，表达高效查询和更新图数据库。Cypher是相对简单的查询语法，它让我们更关注业务领域问题。</p>
+<p>Cypher语言的关键字不区分大小写，但是属性值，标签，关系类型和变量是区分大小写的。</p>
+<p>Neo4j中不存在表的概念，只有标签(labels),节点(Node),关联(Relation),路径(path)，标签里存的节点,节点和关系可以简单理解为图里面的点和边,路径是用节点和关系表示的如：(a)-[r]-&gt;(b)，表示一条从节点a经关系r到节点b的路径。</p>
+<p>在数据查询中，节点一般用小括号()，关联用中括号[]。</p>
+
+        <h3 id="6-2-节点和关系"   >
+          <a href="#6-2-节点和关系" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-2-节点和关系" class="headerlink" title="6.2 节点和关系"></a>6.2 节点和关系</h3>
+      <p><strong>Cypher</strong> 采用一对<strong>圆括号</strong> () 来表示节点，如 (n:角色) 表示一个 <strong>角色</strong> 节点，n 是<strong>变量名</strong>，供命令执行时用 n 来访问这个节点，在命令执行完毕后就无法使用了。同时单独的 () 表示一个<strong>匿名节点</strong>，在匹配时表示<strong>匹配</strong>所有节点。</p>
+<p>在关系中</p>
+<ul>
+<li>–表示无方向的关系</li>
+<li>–&gt; 表示有方向的关系</li>
+<li>-[r]-&gt; 则给关系赋予一个变量名，方便对这个关系进行操作</li>
+<li>-[r:配偶]-&gt; 匹配关系为 配偶 的类型</li>
+</ul>
+
+        <h3 id="6-3-匹配语句"   >
+          <a href="#6-3-匹配语句" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-3-匹配语句" class="headerlink" title="6.3 匹配语句"></a>6.3 匹配语句</h3>
+      <p>在 <strong>Neo4j</strong> 中，<strong>MATCH</strong> 命令用于从数据库中获取节点，关系的信息，类似于 <strong>SQL</strong> 中的 <strong>SELECT</strong>。<strong>RETURN</strong> 则是在 <strong>MATCH</strong> 搜索完成后返回数据，因此 <strong>MATCH</strong> 必须与 <strong>RETURN</strong> 同时使用。</p>
+
+        <h4 id="6-2-1-根据标签匹配节点"   >
+          <a href="#6-2-1-根据标签匹配节点" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-2-1-根据标签匹配节点" class="headerlink" title="6.2.1 根据标签匹配节点"></a>6.2.1 根据标签匹配节点</h4>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 匹配所有 xx节点</span><br><span class="line">match (n:xx) return n</span><br></pre></td></tr></table></div></figure>
+
+<p>例如：匹配所有的<code>person</code></p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">match (n:person) return n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/4ec5197523a141598c0e17b45c6564ac.png#pic_center) -->
+
+
+
+        <h4 id="6-2-2-根据标签和属性匹配节点"   >
+          <a href="#6-2-2-根据标签和属性匹配节点" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-2-2-根据标签和属性匹配节点" class="headerlink" title="6.2.2 根据标签和属性匹配节点"></a>6.2.2 根据标签和属性匹配节点</h4>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 匹配 property 为 yy 的 xx 节点</span><br><span class="line">match (n:xx&#123;property:&#x27;yy&#x27;&#125;) return n</span><br></pre></td></tr></table></div></figure>
+
+<p>例如：匹配<code>name</code>为<code>Martin Scorsese</code>的<code>person</code>节点</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">match (n:person&#123;name:&#x27;Martin Scorsese&#x27;&#125;) return n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/12ba99af4f5c45228d7f65d129c526e5.png#pic_center) -->
+
+
+
+        <h4 id="6-2-3-匹配任意关系"   >
+          <a href="#6-2-3-匹配任意关系" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-2-3-匹配任意关系" class="headerlink" title="6.2.3 匹配任意关系"></a>6.2.3 匹配任意关系</h4>
+      <figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 匹配出有任意关系的两个节点</span><br><span class="line">match p = (n)-[r]-&gt;(m) return p</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/55b3f558310f4b4380ce3326c3166b4e.png#pic_center) -->
+
+
+
+        <h4 id="6-2-3-可选匹配"   >
+          <a href="#6-2-3-可选匹配" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-2-3-可选匹配" class="headerlink" title="6.2.3 可选匹配"></a>6.2.3 可选匹配</h4>
+      <p><code>optional match</code> 类似于 <code>match</code>，不同之处在于 <code>optional match</code> 在匹配不到内容时返回 <code>null</code> 方便查询继续进行，而 <code>match</code> 直接返回查询无结果</p>
+<p>例如：查找电影<code>The Lord of the Rings: The Return of the King</code>的所有关系</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optional match p = (n)-[r]-&gt;(m:movie&#123;title:&#x27;The Lord of the Rings: The Return of the King&#x27;&#125;) return p</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/3f73688c02ae460fa67bd201b59a09cd.png#pic_center) -->
+
+
+<p>例如：查找<code>user</code>的所有节点</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optional match (n: user) return n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/bce8b4f6e781486f9157e748de798131.png#pic_center) -->
+
+
+
+        <h4 id="6-2-4-过滤匹配"   >
+          <a href="#6-2-4-过滤匹配" class="heading-link"><i class="fas fa-link"></i></a><a href="#6-2-4-过滤匹配" class="headerlink" title="6.2.4 过滤匹配"></a>6.2.4 过滤匹配</h4>
+      <p>就像 <code>SQL</code> 一样， <code>Neo4j</code> 中提供 <code>WHERE</code> 子句来过滤 <code>MATCH</code> 的查询结果</p>
+<p>例如：查询<code>Perter Jackson</code>制作过哪些电影</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:person)-[r:produce]-&gt;(m:movie) where n.name=&#x27;Peter Jackson&#x27; return m.title</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/ce3c699a8e4f49c3ae6d3d3d2c33881e.png#pic_center) -->
+
+
+<p>同时 <code>WHERE</code> 可以结合函数 <code>exists()</code> ，字符串匹配 <code>starts with，ends with，contains</code>，逻辑匹配 <code>in，not，and，or</code> 和正则表达式匹配进行更加精细的匹配</p>
+<p>例如：匹配所有包含<code>duration</code>属性的节点</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n) where exists (n.duration) return n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/16144ffe0f864c7c996ad5e0ccd013d8.png#pic_center) -->
+
+
+<p>例如：匹配《魔戒》系列的所有作品</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:movie) where n.title starts with &quot;The Lord of the Rings&quot; return n.title</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/f8a1ac5b0c9f4987aef96ae2895e16f7.png#pic_center) -->
+
+
+<p>此外还有</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 匹配所有 与 person1 和 person2 有关的节点，同时过滤掉 person3 和 person4</span><br><span class="line">match p=(n)--(m) where  n.name in [&#x27;person1&#x27;,&#x27;person2&#x27;] and not m.name in [&#x27;person3&#x27;,&#x27;person4&#x27;] return p</span><br></pre></td></tr></table></div></figure>
+
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 匹配所有 name 包含 x 的节点</span><br><span class="line">// 这个正则表达式等价为 match(n) where n.name contains &#x27;x&#x27; return n</span><br><span class="line">match (n) where n.name =~ &#x27;.+?x.+&#x27; return n</span><br></pre></td></tr></table></div></figure>
+
+
+
+        <h2 id="七、数据创建-x2F-更新"   >
+          <a href="#七、数据创建-x2F-更新" class="heading-link"><i class="fas fa-link"></i></a><a href="#七、数据创建-x2F-更新" class="headerlink" title="七、数据创建&#x2F;更新"></a>七、数据创建&#x2F;更新</h2>
+      
+        <h3 id="7-1-创建节点"   >
+          <a href="#7-1-创建节点" class="heading-link"><i class="fas fa-link"></i></a><a href="#7-1-创建节点" class="headerlink" title="7.1 创建节点"></a>7.1 创建节点</h3>
+      <p><code>CREATE</code> 创建单个节点语法如下：</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE (</span><br><span class="line">    &lt;node-name&gt;:&lt;lable-name&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        &lt;Property1-name&gt;:&lt;Property1-value&gt;</span><br><span class="line">        ......</span><br><span class="line">        &lt;Propertyn-name&gt;:&lt;Propertyn-value&gt;:</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></div></figure>
+
+<p>例如：创建一个<code>James Wan</code>的<code>person</code>节点</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create (n:person&#123;name:&#x27;James Wan&#x27;,id:10000,born:1977&#125;)</span><br></pre></td></tr></table></div></figure>
+
+<p>匹配一下这个被创建的节点</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:person&#123;name:&#x27;James Wan&#x27;&#125;) return n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/bfda9862c0ba499a86266d47ac36eb12.png#pic_center) -->
+
+
+<p>然后再创建一个<code>Fast &amp; Furious 7</code>的<code>movie</code>节点</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create (n:movie&#123;title:&#x27;Fast &amp; Furious 7&#x27;,id:10001&#125;)</span><br></pre></td></tr></table></div></figure>
+
+
+        <h3 id="7-2-创建关系"   >
+          <a href="#7-2-创建关系" class="heading-link"><i class="fas fa-link"></i></a><a href="#7-2-创建关系" class="headerlink" title="7.2 创建关系"></a>7.2 创建关系</h3>
+      <p>例如：创建一个<code>James Wan</code>制作<code>Fast &amp; Furious 7</code>的关系</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:person),(m:movie) WHERE n.name = &#x27;James Wan&#x27; AND m.title = &#x27;Fast &amp; Furious 7&#x27; CREATE (n) -[r:produce]-&gt; (m) RETURN r</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/67217c6319f64a279036b6c4479dc90f.png#pic_center) -->
+
+
+
+        <h3 id="7-3-更新数据"   >
+          <a href="#7-3-更新数据" class="heading-link"><i class="fas fa-link"></i></a><a href="#7-3-更新数据" class="headerlink" title="7.3 更新数据"></a>7.3 更新数据</h3>
+      <p>例如：给<code>James Wan</code>添加一张照片</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:person&#123;name:&#x27;James Wan&#x27;&#125;) set n.poster_image = &#x27;this is an image&#x27; RETURN n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/5b7daa99b1534083bc966b0207b484f0.png#pic_center) -->
+
+
+
+        <h2 id="八、删除"   >
+          <a href="#八、删除" class="heading-link"><i class="fas fa-link"></i></a><a href="#八、删除" class="headerlink" title="八、删除"></a>八、删除</h2>
+      <p>Neo4j 中有两种删除方法，<code>DELETE</code> 和 <code>REMOVE</code>。<code>DELETE</code>用于删除节点和关系，<code>REMOVE</code> 用于删除节点和关系的标签与属性。两者都需要配合 <code>MATCH</code> ,先匹配到内容，再执行操作</p>
+
+        <h3 id="8-1-删除属性"   >
+          <a href="#8-1-删除属性" class="heading-link"><i class="fas fa-link"></i></a><a href="#8-1-删除属性" class="headerlink" title="8.1 删除属性"></a>8.1 删除属性</h3>
+      <p>例如：把<code>James Wan</code>的照片删除</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:person&#123;name:&#x27;James Wan&#x27;&#125;) REMOVE n.poster_image RETURN n</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/fa99a5d9cdb046e4bebd8de20f391e13.png#pic_center) -->
+
+
+
+        <h3 id="8-2-删除节点和边"   >
+          <a href="#8-2-删除节点和边" class="heading-link"><i class="fas fa-link"></i></a><a href="#8-2-删除节点和边" class="headerlink" title="8.2 删除节点和边"></a>8.2 删除节点和边</h3>
+      <p>若要删除节点，则需要删除与节点相关的所有边，这与图论一致——不存在没有节点的边。 因此要删掉金轮法王这个节点，就先需要找到该节点和所在关系，再进行删除</p>
+<p>例如：要删除<code>James Wan</code>，需要同时删除该节点以及与之相关的所有的边</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:person&#123;name:&#x27;James Wan&#x27;&#125;) -[r]- () DELETE n,r</span><br></pre></td></tr></table></div></figure>
+
+<!-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/75481f4b2d5543658ad87f78d9445ffe.png#pic_center) -->
+
+
+
+        <h3 id="8-3-清空数据库"   >
+          <a href="#8-3-清空数据库" class="heading-link"><i class="fas fa-link"></i></a><a href="#8-3-清空数据库" class="headerlink" title="8.3 清空数据库"></a>8.3 清空数据库</h3>
+      <p>要<strong>清空数据库</strong>，意味着要清空所有的<strong>节点</strong>和<strong>边</strong>，<strong>节点</strong>存在两种情况：<strong>有边连接</strong>的和<strong>孤立的节点</strong>，因此需要同时匹配这两种情况，再进行删除</p>
+<figure class="highlight plaintext"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n) -[r]- () DELETE n,r</span><br></pre></td></tr></table></div></figure>
+
+<p>这里就不演示了…</p>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="http://example.com">Yushi Liu</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://example.com/2022/09/15/how_to_install_tugraph/">http://example.com/2022/09/15/how_to_install_tugraph/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://example.com/tags/TuGraph/">TuGraph</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2022/11/04/how_to_use_ethereumetl/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">ethereum-etl拉取以太坊数据</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2022/08/08/how_to_use_web3/"><span class="paginator-prev__text">使用python的web3库与智能合约交互</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">
+          一、安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85docker"><span class="toc-number">1.1.</span> <span class="toc-text">
+          1. 安装docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8B%89%E5%8F%96TuGraph%E9%95%9C%E5%83%8F"><span class="toc-number">1.2.</span> <span class="toc-text">
+          2. 拉取TuGraph镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%90%AF%E5%8A%A8docker"><span class="toc-number">1.3.</span> <span class="toc-text">
+          3. 启动docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%AE%BF%E9%97%AEweb%E7%AB%AF"><span class="toc-number">1.4.</span> <span class="toc-text">
+          4. 访问web端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">
+          二、数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%9B%BE%E5%9F%BA%E7%A1%80"><span class="toc-number">3.</span> <span class="toc-text">
+          三、图基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%BB%BA%E6%A8%A1"><span class="toc-number">4.</span> <span class="toc-text">
+          四、建模</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%96%B0%E5%BB%BA%E5%AD%90%E5%9B%BE"><span class="toc-number">4.1.</span> <span class="toc-text">
+          4.1 新建子图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E9%A1%B6%E7%82%B9%E6%A0%87%E7%AD%BE"><span class="toc-number">4.2.</span> <span class="toc-text">
+          4.2 顶点标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%85%B3%E7%B3%BB%E6%A0%87%E7%AD%BE"><span class="toc-number">4.3.</span> <span class="toc-text">
+          4.3 关系标签</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">
+          五、数据导入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#movie-csv"><span class="toc-number">5.0.1.</span> <span class="toc-text">
+          movie.csv</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#movie-json"><span class="toc-number">5.0.2.</span> <span class="toc-text">
+          movie.json</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#person-csv-%E6%95%B0%E6%8D%AE%E6%AF%94%E8%BE%83%E5%A4%9A%EF%BC%8C%E6%94%BE%E5%9C%A8%E5%8F%A6%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E9%87%8C"><span class="toc-number">5.0.3.</span> <span class="toc-text">
+          person.csv(数据比较多，放在另一篇文章里)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#produce-csv"><span class="toc-number">5.0.4.</span> <span class="toc-text">
+          produce.csv</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2"><span class="toc-number">6.</span> <span class="toc-text">
+          六、数据查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E4%BB%80%E4%B9%88%E6%98%AFCypher"><span class="toc-number">6.1.</span> <span class="toc-text">
+          6.1 什么是Cypher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E8%8A%82%E7%82%B9%E5%92%8C%E5%85%B3%E7%B3%BB"><span class="toc-number">6.2.</span> <span class="toc-text">
+          6.2 节点和关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E5%8C%B9%E9%85%8D%E8%AF%AD%E5%8F%A5"><span class="toc-number">6.3.</span> <span class="toc-text">
+          6.3 匹配语句</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-1-%E6%A0%B9%E6%8D%AE%E6%A0%87%E7%AD%BE%E5%8C%B9%E9%85%8D%E8%8A%82%E7%82%B9"><span class="toc-number">6.3.1.</span> <span class="toc-text">
+          6.2.1 根据标签匹配节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-2-%E6%A0%B9%E6%8D%AE%E6%A0%87%E7%AD%BE%E5%92%8C%E5%B1%9E%E6%80%A7%E5%8C%B9%E9%85%8D%E8%8A%82%E7%82%B9"><span class="toc-number">6.3.2.</span> <span class="toc-text">
+          6.2.2 根据标签和属性匹配节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-3-%E5%8C%B9%E9%85%8D%E4%BB%BB%E6%84%8F%E5%85%B3%E7%B3%BB"><span class="toc-number">6.3.3.</span> <span class="toc-text">
+          6.2.3 匹配任意关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-3-%E5%8F%AF%E9%80%89%E5%8C%B9%E9%85%8D"><span class="toc-number">6.3.4.</span> <span class="toc-text">
+          6.2.3 可选匹配</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-4-%E8%BF%87%E6%BB%A4%E5%8C%B9%E9%85%8D"><span class="toc-number">6.3.5.</span> <span class="toc-text">
+          6.2.4 过滤匹配</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%95%B0%E6%8D%AE%E5%88%9B%E5%BB%BA-x2F-%E6%9B%B4%E6%96%B0"><span class="toc-number">7.</span> <span class="toc-text">
+          七、数据创建&#x2F;更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9"><span class="toc-number">7.1.</span> <span class="toc-text">
+          7.1 创建节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%88%9B%E5%BB%BA%E5%85%B3%E7%B3%BB"><span class="toc-number">7.2.</span> <span class="toc-text">
+          7.2 创建关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE"><span class="toc-number">7.3.</span> <span class="toc-text">
+          7.3 更新数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%88%A0%E9%99%A4"><span class="toc-number">8.</span> <span class="toc-text">
+          八、删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E5%88%A0%E9%99%A4%E5%B1%9E%E6%80%A7"><span class="toc-number">8.1.</span> <span class="toc-text">
+          8.1 删除属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E5%88%A0%E9%99%A4%E8%8A%82%E7%82%B9%E5%92%8C%E8%BE%B9"><span class="toc-number">8.2.</span> <span class="toc-text">
+          8.2 删除节点和边</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E6%B8%85%E7%A9%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">8.3.</span> <span class="toc-text">
+          8.3 清空数据库</span></a></li></ol></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/profile.jpeg" alt="avatar"></div><p class="sidebar-ov-author__text">🤔🤔🤔</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social-item" href="https://github.com/Liuyushiii/" target="_blank" rel="noopener" data-popover="Github" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-github"></i></span></a><a class="sidebar-ov-social-item" href="18101521981" target="_blank" rel="noopener" data-popover="微信" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-weixin"></i></span></a><a class="sidebar-ov-social-item" href="18101521981" target="_blank" rel="noopener" data-popover="Telegram" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-telegram"></i></span></a><a class="sidebar-ov-social-item" href="571190795" target="_blank" rel="noopener" data-popover="QQ" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-qq"></i></span></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2023</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Yushi Liu</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=2.8.0"></script><script src="/js/stun-boot.js?v=2.8.0"></script><script src="/js/scroll.js?v=2.8.0"></script><script src="/js/header.js?v=2.8.0"></script><script src="/js/sidebar.js?v=2.8.0"></script></body></html>
